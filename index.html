@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>필수 영단어 플래시카드 (172단어)</title>
+  <title>핵심 영단어 카드</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .perspective {
@@ -11,7 +11,7 @@
     }
     .preserve-3d {
       transform-style: preserve-3d;
-      transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: transform 0.4s ease;
     }
     .backface-hidden {
       backface-visibility: hidden;
@@ -20,7 +20,6 @@
     .rotate-y-180 {
       transform: rotateY(180deg);
     }
-    /* 스크롤바 숨김 */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -30,88 +29,72 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between p-4 select-none">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between p-4 select-none max-w-md mx-auto">
 
-  <!-- 상단 헤더 & 컨트롤 -->
-  <header class="w-full max-w-xl flex flex-col gap-3 pt-2">
-    <div class="flex items-center justify-between">
-      <h1 class="text-xl font-bold text-slate-900 tracking-tight">영단어 플래시카드</h1>
-      <span id="counter" class="text-sm font-semibold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
-        1 / 172
-      </span>
-    </div>
-
-    <!-- 기능 버튼 바 -->
-    <div class="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200/80">
-      <div class="flex items-center gap-1.5">
-        <button id="btn-shuffle" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-          🔀 랜덤 섞기
-        </button>
-        <button id="btn-reset-order" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-          🔤 알파벳순
-        </button>
+  <!-- 상단 영역 -->
+  <header class="w-full flex flex-col gap-3 pt-2">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-slate-900">핵심 영단어 카드</h1>
+        <p class="text-xs text-slate-500 mt-0.5">카드를 클릭하면 뜻이 표시됩니다</p>
       </div>
-      <div class="flex items-center gap-1.5">
-        <button id="btn-filter-unmemorized" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 transition">
-          ☆ 미암기만 보기 (<span id="unmemorized-count">172</span>)
+      <div class="flex items-center gap-2">
+        <button id="btn-filter-unmemorized" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-700 shadow-sm transition">
+          <span class="w-2 h-2 rounded-full bg-slate-300"></span> 미암기만
+        </button>
+        <button id="btn-shuffle" class="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-700 shadow-sm transition">
+          🔄 순서대로
         </button>
       </div>
     </div>
 
-    <!-- 알파벳 빠른 이동 바 -->
-    <div id="alphabet-bar" class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1"></div>
+    <!-- 알파벳 필터 바 -->
+    <div id="alphabet-bar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+      <!-- 동적 생성 -->
+    </div>
+
+    <!-- 진행 상황 표시 -->
+    <div class="flex items-center justify-between text-xs font-medium text-violet-600 mt-1">
+      <span id="counter">1 / 172</span>
+      <span id="memorized-status">외움: 0 / 172</span>
+    </div>
+    <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+      <div id="progress-bar" class="bg-violet-600 h-full w-0 transition-all duration-300"></div>
+    </div>
   </header>
 
-  <!-- 중앙 카드 영역 -->
-  <main class="w-full max-w-xl flex-1 flex flex-col items-center justify-center my-4">
-    <div id="card-container" class="w-full h-80 sm:h-96 perspective cursor-pointer">
-      <div id="card-inner" class="relative w-full h-full preserve-3d">
+  <!-- 카드 영역 -->
+  <main class="w-full flex-1 flex flex-col items-center justify-center my-6">
+    <div id="card-container" class="w-full h-80 perspective cursor-pointer">
+      <div id="card-inner" class="relative w-full h-full preserve-3d shadow-md rounded-3xl">
         
-        <!-- 카드 앞면 (영단어) -->
-        <div class="absolute inset-0 backface-hidden bg-white rounded-3xl shadow-lg border border-slate-200/80 p-6 flex flex-col justify-between">
+        <!-- 앞면 -->
+        <div class="absolute inset-0 backface-hidden bg-white rounded-3xl border border-slate-100 p-6 flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span id="card-alpha-badge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-100 text-slate-500">
-              A
-            </span>
-            <div class="flex items-center gap-2">
-              <button id="btn-speak" type="button" title="발음 듣기" class="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-indigo-600 transition">
-                🔊
-              </button>
-              <button id="btn-star-front" type="button" title="암기 완료 표시" class="p-2 rounded-full hover:bg-slate-100 text-xl leading-none transition">
-                ☆
-              </button>
+            <span id="card-alpha-badge" class="text-xs font-bold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg">A</span>
+            <div class="flex items-center gap-1">
+              <button id="btn-speak" class="p-2 text-slate-400 hover:text-violet-600 transition" title="발음 듣기">🔊</button>
+              <button id="btn-star-front" class="p-2 text-slate-300 hover:text-amber-400 text-lg transition" title="외운 단어 체크">⭐</button>
             </div>
           </div>
-
-          <div class="flex-1 flex flex-col items-center justify-center text-center px-2">
-            <h2 id="word-text" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight break-words">
-              abstract
-            </h2>
-            <p class="mt-4 text-xs text-slate-400">카드를 클릭하거나 Space 키를 눌러 뜻 확인</p>
+          <div class="flex-1 flex flex-col items-center justify-center text-center">
+            <h2 id="word-text" class="text-3xl font-extrabold text-slate-900 tracking-tight">abstract</h2>
+            <p class="text-xs text-slate-400 mt-3">✨ 터치하여 뜻 보기</p>
           </div>
-
           <div class="h-6"></div>
         </div>
 
-        <!-- 카드 뒷면 (한국어 뜻) -->
-        <div class="absolute inset-0 backface-hidden rotate-y-180 bg-indigo-600 text-white rounded-3xl shadow-lg p-6 flex flex-col justify-between">
+        <!-- 뒷면 -->
+        <div class="absolute inset-0 backface-hidden rotate-y-180 bg-violet-600 text-white rounded-3xl p-6 flex flex-col justify-between shadow-inner">
           <div class="flex items-center justify-between">
-            <span id="word-text-back" class="text-sm font-semibold text-indigo-200">
-              abstract
-            </span>
-            <button id="btn-star-back" type="button" title="암기 완료 표시" class="p-2 rounded-full hover:bg-indigo-500 text-xl leading-none transition">
-              ☆
-            </button>
+            <span id="word-text-back" class="text-xs font-medium text-violet-200">abstract</span>
+            <button id="btn-star-back" class="p-2 text-violet-200 hover:text-amber-300 text-lg transition" title="외운 단어 체크">⭐</button>
           </div>
-
-          <div class="flex-1 flex flex-col items-center justify-center text-center px-4">
-            <p id="meaning-text" class="text-2xl sm:text-3xl font-bold leading-snug break-keep">
-              추상적인
-            </p>
+          <div class="flex-1 flex flex-col items-center justify-center text-center">
+            <p id="meaning-text" class="text-2xl font-bold leading-snug">추상적인</p>
           </div>
-
           <div class="text-center">
-            <span class="text-xs text-indigo-200">클릭하면 단어로 돌아갑니다</span>
+            <span class="text-[11px] text-violet-200">터치하면 단어로 돌아갑니다</span>
           </div>
         </div>
 
@@ -119,26 +102,21 @@
     </div>
   </main>
 
-  <!-- 하단 네비게이션 버튼 -->
-  <footer class="w-full max-w-xl pb-4 flex flex-col gap-3">
-    <div class="flex items-center justify-between gap-4">
-      <button id="btn-prev" class="flex-1 py-3.5 px-5 bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-700 font-semibold rounded-2xl shadow-sm border border-slate-200 transition flex items-center justify-center gap-2">
-        <span>←</span> 이전
-      </button>
-      <button id="btn-flip" class="py-3.5 px-6 bg-slate-800 hover:bg-slate-700 active:scale-[0.99] text-white font-semibold rounded-2xl shadow-sm transition">
-        뜻 보기
-      </button>
-      <button id="btn-next" class="flex-1 py-3.5 px-5 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-semibold rounded-2xl shadow-sm transition flex items-center justify-center gap-2">
-        다음 <span>→</span>
-      </button>
-    </div>
-    <p class="text-center text-[11px] text-slate-400">
-      단축키: ← / → (이전/다음 이동) · Space / Enter (카드 뒤집기)
-    </p>
+  <!-- 하단 네비게이션 -->
+  <footer class="w-full flex items-center gap-3 pb-2">
+    <button id="btn-prev" class="flex-1 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold rounded-2xl shadow-sm transition flex items-center justify-center gap-1">
+      <span class="text-sm">〈</span> 이전
+    </button>
+    <button id="btn-flip" class="py-3.5 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl transition">
+      뒤집기
+    </button>
+    <button id="btn-next" class="flex-1 py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-2xl shadow-sm transition flex items-center justify-center gap-1">
+      다음 <span class="text-sm">〉</span>
+    </button>
   </footer>
 
   <script>
-    // 사진 1~4에 수록된 전체 172개 고유 영단어 데이터
+    // 사진에 수록된 전체 172개 고유 영단어 데이터
     const INITIAL_WORDS = [
       { word: "abstract", meaning: "추상적인" },
       { word: "abundant", meaning: "풍부한" },
@@ -317,7 +295,9 @@
     let currentIndex = 0;
     let isFlipped = false;
     let memorizedSet = new Set();
-    let onlyUnmemorized = false;
+    let filterMode = 'all'; // 'all', 'unmemorized', 'alpha'
+    let currentAlpha = '전체';
+    let isShuffled = false;
 
     const cardInner = document.getElementById("card-inner");
     const cardContainer = document.getElementById("card-container");
@@ -325,46 +305,90 @@
     const wordTextBack = document.getElementById("word-text-back");
     const meaningText = document.getElementById("meaning-text");
     const counter = document.getElementById("counter");
+    const memorizedStatus = document.getElementById("memorized-status");
+    const progressBar = document.getElementById("progress-bar");
     const cardAlphaBadge = document.getElementById("card-alpha-badge");
     const btnStarFront = document.getElementById("btn-star-front");
     const btnStarBack = document.getElementById("btn-star-back");
-    const unmemorizedCount = document.getElementById("unmemorized-count");
     const btnFilterUnmemorized = document.getElementById("btn-filter-unmemorized");
+    const btnShuffle = document.getElementById("btn-shuffle");
     const alphabetBar = document.getElementById("alphabet-bar");
 
+    function updateDeck() {
+      let base = [...INITIAL_WORDS];
+
+      if (filterMode === 'unmemorized') {
+        base = base.filter(item => !memorizedSet.has(item.word));
+      } else if (filterMode === 'alpha' && currentAlpha !== '전체') {
+        base = base.filter(item => item.word[0].toUpperCase() === currentAlpha);
+      }
+
+      if (isShuffled) {
+        for (let i = base.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [base[i], base[j]] = [base[j], base[i]];
+        }
+      } else {
+        base.sort((a, b) => a.word.localeCompare(b.word));
+      }
+
+      deck = base;
+      if (currentIndex >= deck.length) currentIndex = 0;
+      if (deck.length === 0) currentIndex = 0;
+    }
+
     function renderAlphabetBar() {
-      const letters = [...new Set(deck.map(item => item.word[0].toUpperCase()))].sort();
       alphabetBar.innerHTML = "";
+      const letters = ['전체', ...new Set(INITIAL_WORDS.map(item => item.word[0].toUpperCase()))].sort((a, b) => {
+        if (a === '전체') return -1;
+        if (b === '전체') return 1;
+        return a.localeCompare(b);
+      });
+
       letters.forEach(letter => {
         const btn = document.createElement("button");
         btn.textContent = letter;
-        btn.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-white border border-slate-200 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shrink-0";
+        const isActive = (filterMode === 'alpha' && currentAlpha === letter) || (filterMode !== 'alpha' && letter === '전체');
+        
+        btn.className = `px-3.5 py-1.5 text-xs font-bold rounded-full transition shrink-0 ${
+          isActive 
+            ? 'bg-violet-600 text-white shadow-sm' 
+            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+        }`;
+
         btn.onclick = () => {
-          const idx = deck.findIndex(item => item.word[0].toUpperCase() === letter);
-          if (idx !== -1) {
-            currentIndex = idx;
-            isFlipped = false;
-            updateCard();
+          if (letter === '전체') {
+            filterMode = filterMode === 'unmemorized' ? 'unmemorized' : 'all';
+            currentAlpha = '전체';
+          } else {
+            filterMode = 'alpha';
+            currentAlpha = letter;
           }
+          currentIndex = 0;
+          isFlipped = false;
+          updateDeck();
+          updateCard();
+          renderAlphabetBar();
         };
         alphabetBar.appendChild(btn);
       });
     }
 
     function updateCard() {
-      unmemorizedCount.textContent = INITIAL_WORDS.length - memorizedSet.size;
-
+      memorizedStatus.textContent = `외움: ${memorizedSet.size} / ${INITIAL_WORDS.length}`;
+      
       if (deck.length === 0) {
-        wordText.textContent = "모두 암기했습니다! 🎉";
+        wordText.textContent = "조건에 맞는 단어가 없습니다";
         wordTextBack.textContent = "완료";
-        meaningText.textContent = "상단의 '미암기만 보기'를 해제하면 전체 단어를 다시 볼 수 있습니다.";
+        meaningText.textContent = "다른 필터를 선택해 보세요.";
         counter.textContent = "0 / 0";
+        progressBar.style.width = "0%";
         cardAlphaBadge.textContent = "-";
         return;
       }
 
-      if (currentIndex >= deck.length) currentIndex = 0;
-      if (currentIndex < 0) currentIndex = deck.length - 1;
+      if (currentIndex >= deck.length) currentIndex = deck.length - 1;
+      if (currentIndex < 0) currentIndex = 0;
 
       const currentItem = deck[currentIndex];
       wordText.textContent = currentItem.word;
@@ -373,10 +397,12 @@
       counter.textContent = `${currentIndex + 1} / ${deck.length}`;
       cardAlphaBadge.textContent = currentItem.word[0].toUpperCase();
 
+      const progressPercent = ((currentIndex + 1) / deck.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
       const isMem = memorizedSet.has(currentItem.word);
-      const starChar = isMem ? "⭐" : "☆";
-      btnStarFront.textContent = starChar;
-      btnStarBack.textContent = starChar;
+      btnStarFront.style.color = isMem ? "#fbbf24" : "#cbd5e1";
+      btnStarBack.style.color = isMem ? "#fde047" : "rgba(255,255,255,0.5)";
 
       if (isFlipped) {
         cardInner.classList.add("rotate-y-180");
@@ -414,11 +440,6 @@
       } else {
         memorizedSet.add(word);
       }
-
-      if (onlyUnmemorized) {
-        deck = INITIAL_WORDS.filter(item => !memorizedSet.has(item.word));
-        isFlipped = false;
-      }
       updateCard();
     }
 
@@ -432,7 +453,7 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    // 이벤트 연결
+    // 이벤트 리스너
     cardContainer.addEventListener("click", flipCard);
     document.getElementById("btn-flip").addEventListener("click", flipCard);
     document.getElementById("btn-next").addEventListener("click", nextCard);
@@ -441,71 +462,46 @@
     btnStarBack.addEventListener("click", toggleMemorized);
     document.getElementById("btn-speak").addEventListener("click", speakWord);
 
-    document.getElementById("btn-shuffle").addEventListener("click", () => {
-      for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-      }
-      currentIndex = 0;
-      isFlipped = false;
-      updateCard();
-    });
-
-    document.getElementById("btn-reset-order").addEventListener("click", () => {
-      const base = onlyUnmemorized
-        ? INITIAL_WORDS.filter(item => !memorizedSet.has(item.word))
-        : [...INITIAL_WORDS];
-      deck = base.sort((a, b) => a.word.localeCompare(b.word));
-      currentIndex = 0;
-      isFlipped = false;
-      renderAlphabetBar();
-      updateCard();
-    });
-
     btnFilterUnmemorized.addEventListener("click", () => {
-      onlyUnmemorized = !onlyUnmemorized;
-      if (onlyUnmemorized) {
-        deck = INITIAL_WORDS.filter(item => !memorizedSet.has(item.word));
-        btnFilterUnmemorized.classList.replace("bg-amber-50", "bg-amber-500");
-        btnFilterUnmemorized.classList.replace("text-amber-700", "text-white");
+      if (filterMode === 'unmemorized') {
+        filterMode = currentAlpha !== '전체' ? 'alpha' : 'all';
+        btnFilterUnmemorized.classList.remove("bg-violet-600", "text-white", "border-violet-600");
+        btnFilterUnmemorized.classList.add("bg-white", "text-slate-700", "border-slate-200");
       } else {
-        deck = [...INITIAL_WORDS];
-        btnFilterUnmemorized.classList.replace("bg-amber-500", "bg-amber-50");
-        btnFilterUnmemorized.classList.replace("text-white", "text-amber-700");
+        filterMode = 'unmemorized';
+        btnFilterUnmemorized.classList.add("bg-violet-600", "text-white", "border-violet-600");
+        btnFilterUnmemorized.classList.remove("bg-white", "text-slate-700", "border-slate-200");
       }
       currentIndex = 0;
       isFlipped = false;
-      renderAlphabetBar();
+      updateDeck();
+      updateCard();
+    });
+
+    btnShuffle.addEventListener("click", () => {
+      isShuffled = !isShuffled;
+      btnShuffle.textContent = isShuffled ? "🔀 섞임" : "🔄 순서대로";
+      btnShuffle.className = isShuffled 
+        ? "flex items-center gap-1 px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-full text-xs font-medium text-violet-700 shadow-sm transition"
+        : "flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-700 shadow-sm transition";
+      currentIndex = 0;
+      isFlipped = false;
+      updateDeck();
       updateCard();
     });
 
     // 키보드 단축키
     document.addEventListener("keydown", (e) => {
-      if (e.code === "ArrowRight") {
-        nextCard();
-      } else if (e.code === "ArrowLeft") {
-        prevCard();
-      } else if (e.code === "Space" || e.code === "Enter") {
+      if (e.code === "ArrowRight") nextCard();
+      else if (e.code === "ArrowLeft") prevCard();
+      else if (e.code === "Space" || e.code === "Enter") {
         e.preventDefault();
         flipCard();
       }
     });
 
-    // 모바일 스와이프 지원
-    let touchStartX = 0;
-    cardContainer.addEventListener("touchstart", (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    cardContainer.addEventListener("touchend", (e) => {
-      const diff = e.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(diff) > 50) {
-        if (diff < 0) nextCard();
-        else prevCard();
-      }
-    }, { passive: true });
-
-    // 초기화
+    // 초기 실행
+    updateDeck();
     renderAlphabetBar();
     updateCard();
   </script>
