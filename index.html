@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>핵심 영단어 플래시카드</title>
+    <title>핵심 영단어 플래시카드 (208선)</title>
     <!-- Tailwind CSS 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Noto Sans KR -->
@@ -67,11 +67,14 @@
     <header class="w-full max-w-2xl mx-auto px-4 pt-5 pb-2">
         <div class="flex items-center justify-between mb-3">
             <div>
-                <h1 class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">핵심 영단어 카드</h1>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">핵심 영단어 카드</h1>
+                    <span id="total-badge" class="px-2 py-0.5 text-[11px] font-bold bg-indigo-100 text-indigo-700 rounded-md">208단어</span>
+                </div>
                 <p class="text-xs text-slate-500 mt-0.5">카드를 클릭하면 뜻이 표시됩니다</p>
             </div>
             
-            <!-- 상단 유틸리티 버튼 (셔플 / 미암기만 보기) -->
+            <!-- 상단 유틸리티 버튼 (미암기만 보기 / 셔플) -->
             <div class="flex items-center gap-2">
                 <button id="btn-unmemorized" onclick="toggleUnmemorizedFilter()" 
                     class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5 shadow-sm">
@@ -96,8 +99,8 @@
 
         <!-- 진행도 표시기 & 프로그레스 바 -->
         <div class="flex items-center justify-between text-xs font-semibold text-slate-500 mb-1.5">
-            <span id="progress-text">1 / 172</span>
-            <span id="memorized-count" class="text-indigo-600">외움: 0개</span>
+            <span id="progress-text">1 / 208</span>
+            <span id="memorized-count" class="text-indigo-600">외움: 0 / 208</span>
         </div>
         <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
             <div id="progress-bar" class="h-full bg-indigo-600 rounded-full transition-all duration-300" style="width: 1%;"></div>
@@ -165,11 +168,20 @@
                 <div class="card-face card-back bg-indigo-600 text-white flex flex-col justify-between p-6">
                     <div class="flex items-center justify-between">
                         <span id="word-sub-back" class="text-xs font-semibold text-indigo-200 tracking-wide">abstract</span>
-                        <button onclick="toggleMemorized(event)" class="btn-star p-2.5 rounded-xl bg-indigo-500/50 text-indigo-200 hover:bg-indigo-500 hover:text-amber-300 active:scale-95 transition" title="외움 표시">
-                            <svg class="w-5 h-5 star-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
-                            </svg>
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <!-- 뒷면에서도 발음 듣기 지원 -->
+                            <button onclick="speakWord(event)" class="p-2.5 rounded-xl bg-indigo-500/50 text-indigo-100 hover:bg-indigo-500 active:scale-95 transition" title="발음 듣기">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                                </svg>
+                            </button>
+                            <!-- 외움 체크 버튼 -->
+                            <button onclick="toggleMemorized(event)" class="btn-star p-2.5 rounded-xl bg-indigo-500/50 text-indigo-200 hover:bg-indigo-500 hover:text-amber-300 active:scale-95 transition" title="외움 표시">
+                                <svg class="w-5 h-5 star-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="my-auto text-center px-3">
@@ -226,13 +238,14 @@
     </div>
 
     <script>
-        // 전체 영단어 데이터 (총 172개)
-        const RAW_VOCAB = [
+        // 전체 통합 영단어 데이터 (알파벳순, 정확히 208개 고유 단어)
+        const BASE_VOCAB = [
             { word: "abstract", meaning: "추상적인" },
             { word: "accelerate", meaning: "가속하다" },
             { word: "accessible", meaning: "접근 가능한, 이해하기 쉬운" },
             { word: "accompany", meaning: "동반하다" },
             { word: "accomplish", meaning: "성취하다" },
+            { word: "accountability", meaning: "책무" },
             { word: "account for", meaning: "설명하다, 차지하다" },
             { word: "accumulate", meaning: "축적하다" },
             { word: "acknowledge", meaning: "인정하다" },
@@ -240,12 +253,14 @@
             { word: "adequate", meaning: "충분한, 적절한" },
             { word: "adverse", meaning: "불리한, 부정적인" },
             { word: "advocate", meaning: "옹호하다, 주장하다" },
+            { word: "alleviate", meaning: "완화하다" },
             { word: "allocate", meaning: "할당하다" },
             { word: "alter", meaning: "바꾸다" },
             { word: "ambiguous", meaning: "모호한" },
             { word: "anticipate", meaning: "예상하다" },
             { word: "apparent", meaning: "명백한, 외견상의" },
             { word: "arbitrary", meaning: "임의적인, 자의적인" },
+            { word: "ascertain", meaning: "확인하다" },
             { word: "assess", meaning: "평가하다" },
             { word: "assume", meaning: "가정하다, 맡다" },
             { word: "assumption", meaning: "가정" },
@@ -261,16 +276,20 @@
             { word: "coherent", meaning: "일관성 있는" },
             { word: "coincide", meaning: "동시에 일어나다, 일치하다" },
             { word: "compatible", meaning: "양립할 수 있는" },
-            { word: "compensate", meaning: "보상하다" },
             { word: "compelling", meaning: "설득력 있는, 강력한" },
+            { word: "compensate", meaning: "보상하다" },
             { word: "complementary", meaning: "상호 보완적인" },
+            { word: "comply", meaning: "준수하다" },
             { word: "comprehensive", meaning: "포괄적인" },
             { word: "consequence", meaning: "결과" },
             { word: "considerable", meaning: "상당한" },
             { word: "consistent", meaning: "일관된" },
+            { word: "consolidate", meaning: "통합하다" },
             { word: "constitute", meaning: "구성하다" },
             { word: "constrain", meaning: "제한하다" },
             { word: "constraint", meaning: "제약" },
+            { word: "contemplate", meaning: "숙고하다" },
+            { word: "contingency", meaning: "만일의 사태" },
             { word: "contradict", meaning: "모순되다, 반박하다" },
             { word: "contrary", meaning: "반대의" },
             { word: "controversial", meaning: "논란의 여지가 있는" },
@@ -278,6 +297,7 @@
             { word: "conventional", meaning: "관습적인, 전통적인" },
             { word: "convert", meaning: "전환하다" },
             { word: "convey", meaning: "전달하다" },
+            { word: "corroborate", meaning: "뒷받침하다" },
             { word: "criterion", meaning: "기준" },
             { word: "cumulative", meaning: "누적되는" },
             { word: "deceptive", meaning: "기만적인" },
@@ -285,32 +305,40 @@
             { word: "demonstrate", meaning: "입증하다" },
             { word: "derive", meaning: "얻다, 유래하다" },
             { word: "detect", meaning: "발견하다, 감지하다" },
+            { word: "detrimental", meaning: "해로운" },
             { word: "dimension", meaning: "측면, 차원" },
             { word: "diminish", meaning: "감소하다, 약화하다" },
             { word: "discard", meaning: "버리다, 폐기하다" },
             { word: "discrepancy", meaning: "불일치, 차이" },
+            { word: "disseminate", meaning: "퍼뜨리다" },
             { word: "distinction", meaning: "차이, 구별" },
             { word: "distinctive", meaning: "독특한, 뚜렷한" },
             { word: "distinguish", meaning: "구별하다" },
             { word: "elaborate", meaning: "정교한, 상세히 설명하다" },
             { word: "eliminate", meaning: "제거하다" },
+            { word: "elusive", meaning: "파악하기 어려운" },
             { word: "emerge", meaning: "나타나다, 등장하다" },
             { word: "empirical", meaning: "경험적인, 실증적인" },
             { word: "encounter", meaning: "마주치다" },
             { word: "ensure", meaning: "보장하다" },
+            { word: "entail", meaning: "수반하다" },
             { word: "equivalent", meaning: "동등한" },
             { word: "establish", meaning: "확립하다" },
             { word: "evolve", meaning: "발전하다, 진화하다" },
+            { word: "exacerbate", meaning: "악화시키다" },
             { word: "exceed", meaning: "초과하다" },
             { word: "exception", meaning: "예외" },
             { word: "exceptional", meaning: "예외적인, 뛰어난" },
             { word: "excessive", meaning: "지나친" },
             { word: "expectation", meaning: "기대" },
+            { word: "expedite", meaning: "신속히 처리하다" },
+            { word: "expenditure", meaning: "지출" },
             { word: "explicit", meaning: "명시적인" },
             { word: "exploit", meaning: "이용하다, 활용하다" },
             { word: "expose", meaning: "노출하다, 드러내다" },
             { word: "extract", meaning: "추출하다" },
             { word: "facilitate", meaning: "촉진하다, 용이하게 하다" },
+            { word: "feasibility", meaning: "실행 가능성" },
             { word: "feasible", meaning: "실행 가능한" },
             { word: "fragile", meaning: "취약한, 깨지기 쉬운" },
             { word: "fundamental", meaning: "근본적인" },
@@ -318,8 +346,8 @@
             { word: "genuine", meaning: "진정한" },
             { word: "gradual", meaning: "점진적인" },
             { word: "identical", meaning: "동일한" },
-            { word: "implicit", meaning: "암묵적인" },
             { word: "implication", meaning: "함의, 영향" },
+            { word: "implicit", meaning: "암묵적인" },
             { word: "impose", meaning: "부과하다, 강요하다" },
             { word: "incentive", meaning: "동기, 유인" },
             { word: "incorporate", meaning: "포함하다, 통합하다" },
@@ -337,25 +365,32 @@
             { word: "intensive", meaning: "집중적인" },
             { word: "interpret", meaning: "해석하다" },
             { word: "intervene", meaning: "개입하다" },
+            { word: "intrinsic", meaning: "내재적인" },
             { word: "isolate", meaning: "분리하다" },
             { word: "justify", meaning: "정당화하다" },
+            { word: "lucrative", meaning: "수익성이 좋은" },
             { word: "manipulate", meaning: "조작하다, 다루다" },
             { word: "marginal", meaning: "미미한, 주변의" },
             { word: "mechanism", meaning: "작동 원리, 기제" },
+            { word: "meticulous", meaning: "꼼꼼한" },
             { word: "misconception", meaning: "오해" },
             { word: "modest", meaning: "적당한, 크지 않은" },
             { word: "modify", meaning: "수정하다" },
             { word: "mutual", meaning: "상호 간의" },
             { word: "objective", meaning: "객관적인" },
             { word: "obscure", meaning: "불분명한, 모호한" },
+            { word: "obsolete", meaning: "구식의" },
             { word: "obtain", meaning: "얻다" },
             { word: "optimal", meaning: "최적의" },
             { word: "original", meaning: "독창적인, 원래의" },
             { word: "overcome", meaning: "극복하다" },
             { word: "overwhelming", meaning: "압도적인" },
             { word: "perceive", meaning: "인식하다" },
+            { word: "perpetuate", meaning: "지속시키다" },
             { word: "persistent", meaning: "지속적인" },
+            { word: "pertinent", meaning: "관련 있는" },
             { word: "plausible", meaning: "그럴듯한" },
+            { word: "predisposition", meaning: "성향" },
             { word: "prevalent", meaning: "널리 퍼진" },
             { word: "primitive", meaning: "원시적인" },
             { word: "principle", meaning: "원리, 원칙" },
@@ -365,23 +400,34 @@
             { word: "promote", meaning: "촉진하다" },
             { word: "proportion", meaning: "비율" },
             { word: "pursue", meaning: "추구하다" },
+            { word: "ramification", meaning: "파급 효과" },
             { word: "rational", meaning: "합리적인" },
             { word: "reciprocal", meaning: "상호적인" },
+            { word: "reciprocity", meaning: "상호성" },
+            { word: "reconcile", meaning: "조화시키다" },
+            { word: "redundant", meaning: "불필요한" },
             { word: "relevant", meaning: "관련 있는" },
             { word: "reliable", meaning: "신뢰할 수 있는" },
+            { word: "relinquish", meaning: "포기하다" },
             { word: "reluctant", meaning: "꺼리는" },
             { word: "remarkable", meaning: "주목할 만한" },
             { word: "representation", meaning: "표현, 재현" },
+            { word: "resilient", meaning: "회복력이 있는" },
             { word: "restrict", meaning: "제한하다" },
             { word: "retain", meaning: "보유하다, 유지하다" },
             { word: "rigid", meaning: "엄격한, 경직된" },
             { word: "scarce", meaning: "부족한, 희귀한" },
+            { word: "scrutinize", meaning: "면밀히 조사하다" },
             { word: "stimulate", meaning: "자극하다, 촉진하다" },
+            { word: "stringent", meaning: "엄격한" },
             { word: "subjective", meaning: "주관적인" },
             { word: "subsequent", meaning: "그 이후의" },
+            { word: "substantial", meaning: "상당한" },
+            { word: "substantiate", meaning: "입증하다" },
             { word: "substitute", meaning: "대체하다" },
             { word: "subtle", meaning: "미묘한" },
             { word: "sufficient", meaning: "충분한" },
+            { word: "susceptible", meaning: "영향받기 쉬운" },
             { word: "sustain", meaning: "유지하다, 지속시키다" },
             { word: "temporary", meaning: "일시적인" },
             { word: "tentative", meaning: "잠정적인" },
@@ -391,17 +437,37 @@
             { word: "undergo", meaning: "겪다" },
             { word: "undermine", meaning: "약화시키다" },
             { word: "universal", meaning: "보편적인" },
+            { word: "unprecedented", meaning: "전례 없는" },
             { word: "utilize", meaning: "활용하다" },
             { word: "valid", meaning: "타당한, 유효한" },
+            { word: "viability", meaning: "실현 가능성" },
             { word: "voluntary", meaning: "자발적인" },
             { word: "whereas", meaning: "반면에" },
             { word: "withdraw", meaning: "철회하다, 물러나다" },
             { word: "yield", meaning: "산출하다, 양보하다" }
-        ].map((item, idx) => ({
-            ...item,
-            id: idx,
-            letter: item.word[0].toUpperCase()
-        }));
+        ];
+
+        // 소문자 기준 중복 제거 및 알파벳순 보장
+        const uniqueMap = new Map();
+        BASE_VOCAB.forEach(item => {
+            const key = item.word.trim().toLowerCase();
+            if (!uniqueMap.has(key)) {
+                uniqueMap.set(key, {
+                    word: item.word.trim(),
+                    meaning: item.meaning.trim()
+                });
+            }
+        });
+
+        const RAW_VOCAB = Array.from(uniqueMap.values())
+            .sort((a, b) => a.word.toLowerCase().localeCompare(b.word.toLowerCase()))
+            .map((item, idx) => ({
+                ...item,
+                id: idx,
+                letter: item.word[0].toUpperCase()
+            }));
+
+        const VALID_WORDS = new Set(RAW_VOCAB.map(item => item.word));
 
         // 앱 상태 관리
         let currentList = [...RAW_VOCAB];
@@ -412,11 +478,12 @@
         let onlyUnmemorized = false;
         let memorizedSet = new Set();
 
-        // 로컬 스토리지에서 외운 단어 기록 불러오기
+        // 로컬 스토리지에서 외운 단어 기록 불러오기 (유효한 단어만 필터링)
         try {
             const saved = localStorage.getItem('vocab_memorized_v1');
             if (saved) {
-                memorizedSet = new Set(JSON.parse(saved));
+                const parsed = JSON.parse(saved);
+                memorizedSet = new Set(parsed.filter(w => VALID_WORDS.has(w)));
             }
         } catch (e) {
             console.warn("로컬 스토리지 접근 제한:", e);
@@ -439,6 +506,7 @@
 
         // 초기화
         function init() {
+            document.getElementById('total-badge').textContent = `${RAW_VOCAB.length}단어`;
             renderAlphabetBar();
             applyFilters();
             setupTouchSwipe();
@@ -565,7 +633,6 @@
             if (isFlipped) {
                 isFlipped = false;
                 cardInner.classList.remove('is-flipped');
-                // 카드가 돌아가는 애니메이션 중 텍스트가 미리 보이지 않도록 살짝 지연
                 setTimeout(() => {
                     renderCard();
                 }, 140);
@@ -624,7 +691,7 @@
 
         // 외움 표시 토글
         function toggleMemorized(event) {
-            event.stopPropagation(); // 카드 뒤집힘 방지
+            event.stopPropagation();
             if (currentList.length === 0) return;
 
             const word = currentList[currentIndex].word;
@@ -660,7 +727,7 @@
 
         // 영어 발음 듣기 (Web Speech API)
         function speakWord(event) {
-            event.stopPropagation(); // 카드 뒤집힘 방지
+            event.stopPropagation();
             if (currentList.length === 0) return;
 
             if ('speechSynthesis' in window) {
@@ -714,9 +781,9 @@
                 const diff = touchStartX - touchEndX;
                 if (Math.abs(diff) > 55) {
                     if (diff > 0) {
-                        nextCard(); // 왼쪽으로 스와이프 -> 다음 단어
+                        nextCard();
                     } else {
-                        prevCard(); // 오른쪽으로 스와이프 -> 이전 단어
+                        prevCard();
                     }
                 }
             }, { passive: true });
