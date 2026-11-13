@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>핵심 영단어 플래시카드 (208선)</title>
+    <title>핵심 영단어 플래시카드 (218선)</title>
     <!-- Tailwind CSS 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Noto Sans KR -->
@@ -69,7 +69,7 @@
             <div>
                 <div class="flex items-center gap-2">
                     <h1 class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">핵심 영단어 카드</h1>
-                    <span id="total-badge" class="px-2 py-0.5 text-[11px] font-bold bg-indigo-100 text-indigo-700 rounded-md">208단어</span>
+                    <span id="total-badge" class="px-2 py-0.5 text-[11px] font-bold bg-indigo-100 text-indigo-700 rounded-md">218단어</span>
                 </div>
                 <p class="text-xs text-slate-500 mt-0.5">카드를 클릭하면 뜻이 표시됩니다</p>
             </div>
@@ -99,8 +99,8 @@
 
         <!-- 진행도 표시기 & 프로그레스 바 -->
         <div class="flex items-center justify-between text-xs font-semibold text-slate-500 mb-1.5">
-            <span id="progress-text">1 / 208</span>
-            <span id="memorized-count" class="text-indigo-600">외움: 0 / 208</span>
+            <span id="progress-text">1 / 218</span>
+            <span id="memorized-count" class="text-indigo-600">외움: 0 / 218</span>
         </div>
         <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
             <div id="progress-bar" class="h-full bg-indigo-600 rounded-full transition-all duration-300" style="width: 1%;"></div>
@@ -238,7 +238,7 @@
     </div>
 
     <script>
-        // 전체 통합 영단어 데이터 (알파벳순, 정확히 208개 고유 단어)
+        // 전체 통합 영단어 데이터 (알파벳순, 중복 제외 신규 13단어 추가 -> 총 218개 고유 단어)
         const BASE_VOCAB = [
             { word: "abstract", meaning: "추상적인" },
             { word: "accelerate", meaning: "가속하다" },
@@ -275,12 +275,14 @@
             { word: "clarify", meaning: "명확히 하다" },
             { word: "coherent", meaning: "일관성 있는" },
             { word: "coincide", meaning: "동시에 일어나다, 일치하다" },
+            { word: "compact", meaning: "소형의" },
             { word: "compatible", meaning: "양립할 수 있는" },
             { word: "compelling", meaning: "설득력 있는, 강력한" },
             { word: "compensate", meaning: "보상하다" },
             { word: "complementary", meaning: "상호 보완적인" },
             { word: "comply", meaning: "준수하다" },
             { word: "comprehensive", meaning: "포괄적인" },
+            { word: "confidential", meaning: "비밀의" },
             { word: "consequence", meaning: "결과" },
             { word: "considerable", meaning: "상당한" },
             { word: "consistent", meaning: "일관된" },
@@ -292,6 +294,7 @@
             { word: "contingency", meaning: "만일의 사태" },
             { word: "contradict", meaning: "모순되다, 반박하다" },
             { word: "contrary", meaning: "반대의" },
+            { word: "contribute", meaning: "기여하다" },
             { word: "controversial", meaning: "논란의 여지가 있는" },
             { word: "convention", meaning: "관습, 관례" },
             { word: "conventional", meaning: "관습적인, 전통적인" },
@@ -303,6 +306,7 @@
             { word: "deceptive", meaning: "기만적인" },
             { word: "deliberate", meaning: "의도적인, 신중한" },
             { word: "demonstrate", meaning: "입증하다" },
+            { word: "demonstration", meaning: "증명" },
             { word: "derive", meaning: "얻다, 유래하다" },
             { word: "detect", meaning: "발견하다, 감지하다" },
             { word: "detrimental", meaning: "해로운" },
@@ -330,6 +334,7 @@
             { word: "exception", meaning: "예외" },
             { word: "exceptional", meaning: "예외적인, 뛰어난" },
             { word: "excessive", meaning: "지나친" },
+            { word: "exclusive", meaning: "독점적인" },
             { word: "expectation", meaning: "기대" },
             { word: "expedite", meaning: "신속히 처리하다" },
             { word: "expenditure", meaning: "지출" },
@@ -363,14 +368,17 @@
             { word: "insight", meaning: "통찰" },
             { word: "integrate", meaning: "통합하다" },
             { word: "intensive", meaning: "집중적인" },
+            { word: "intently", meaning: "열중하여" },
             { word: "interpret", meaning: "해석하다" },
             { word: "intervene", meaning: "개입하다" },
             { word: "intrinsic", meaning: "내재적인" },
             { word: "isolate", meaning: "분리하다" },
             { word: "justify", meaning: "정당화하다" },
             { word: "lucrative", meaning: "수익성이 좋은" },
+            { word: "manifest", meaning: "명백한" },
             { word: "manipulate", meaning: "조작하다, 다루다" },
             { word: "marginal", meaning: "미미한, 주변의" },
+            { word: "meanwhile", meaning: "한편" },
             { word: "mechanism", meaning: "작동 원리, 기제" },
             { word: "meticulous", meaning: "꼼꼼한" },
             { word: "misconception", meaning: "오해" },
@@ -390,6 +398,7 @@
             { word: "persistent", meaning: "지속적인" },
             { word: "pertinent", meaning: "관련 있는" },
             { word: "plausible", meaning: "그럴듯한" },
+            { word: "pose", meaning: "제기하다" },
             { word: "predisposition", meaning: "성향" },
             { word: "prevalent", meaning: "널리 퍼진" },
             { word: "primitive", meaning: "원시적인" },
@@ -406,6 +415,7 @@
             { word: "reciprocity", meaning: "상호성" },
             { word: "reconcile", meaning: "조화시키다" },
             { word: "redundant", meaning: "불필요한" },
+            { word: "refer to ~ as", meaning: "~를 …라 부르다" },
             { word: "relevant", meaning: "관련 있는" },
             { word: "reliable", meaning: "신뢰할 수 있는" },
             { word: "relinquish", meaning: "포기하다" },
@@ -414,6 +424,7 @@
             { word: "representation", meaning: "표현, 재현" },
             { word: "resilient", meaning: "회복력이 있는" },
             { word: "restrict", meaning: "제한하다" },
+            { word: "retail", meaning: "소매업" },
             { word: "retain", meaning: "보유하다, 유지하다" },
             { word: "rigid", meaning: "엄격한, 경직된" },
             { word: "scarce", meaning: "부족한, 희귀한" },
@@ -423,12 +434,14 @@
             { word: "subjective", meaning: "주관적인" },
             { word: "subsequent", meaning: "그 이후의" },
             { word: "substantial", meaning: "상당한" },
+            { word: "substantially", meaning: "상당히" },
             { word: "substantiate", meaning: "입증하다" },
             { word: "substitute", meaning: "대체하다" },
             { word: "subtle", meaning: "미묘한" },
             { word: "sufficient", meaning: "충분한" },
             { word: "susceptible", meaning: "영향받기 쉬운" },
             { word: "sustain", meaning: "유지하다, 지속시키다" },
+            { word: "take up", meaning: "차지하다, 시작하다, 다루다" },
             { word: "temporary", meaning: "일시적인" },
             { word: "tentative", meaning: "잠정적인" },
             { word: "transmit", meaning: "전달하다, 전송하다" },
